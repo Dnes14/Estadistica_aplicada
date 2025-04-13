@@ -1,0 +1,6 @@
+"0",""
+"0","# llamamos a la libreria para utilizar PerformanceAnalytics"
+"0","library(PerformanceAnalytics) "
+"0",""
+"0",""
+"0","chart.Correlation(data)"

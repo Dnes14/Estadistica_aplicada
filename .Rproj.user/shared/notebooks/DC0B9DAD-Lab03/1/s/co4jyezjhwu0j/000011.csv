@@ -1,0 +1,3 @@
+"0",""
+"0","ingreso_est = predict(object = modelo, newdata = distancias_futuras)"
+"0","as.data.frame(ingreso_est)"

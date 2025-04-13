@@ -1,0 +1,96 @@
+---
+title: "GLAB3"
+author: "EFN"
+date: "2023-04-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## GUIA DE LABORATORIO
+Revise junto con el docente el ejemplo de aplicación para que luego pueda resolver el caso de aplicación propuesto.
+
+### EJEMPLO DE APLICACIÓN
+1. Primero creamos un archivo R Markdown, colocando un título y autor que irán 
+en la cabecera.
+
+2. Primero leeremos la base de datos llamada ‘hotel’, la cual contiene el ingreso percibido por día en su restaurante y el número de habitaciones ocupadas por noche. Insertamos un ‘chunk’ (bloque para código) desde la pestaña ‘Code’ o con la combinación de teclas “Ctrl + Alt + I'.
+
+2- Leyendo la base de datos
+
+```{r cars}
+data = read.table("hotel.txt" , sep="", header=T)
+data = data[-1]
+data
+```
+
+3. Podemos calcular algunas medidas descriptivas con la función summary().
+
+
+```{r, echo=FALSE}
+summary(data)
+```
+4. Implicamos que el ingreso percibido depende del número de habitaciones ocupadas y puesto que en la data aparece primero la variable “Ingreso'y luego “Habitaciones las extraeremos de la data y las denotaremos como dependiente (y) e independiente (x). Luego, elaboraremos un diagrama de dispersión usando la función “plot( )’ para observar el tipo posible de tendencia entre las variables analizadas. Colocamos primero la variable dependiente y luego la independiente colocando en medio el simbolo "~", cuya combinación de teclas es ‘Alt + 126”.
+
+```{r}
+x = data$Habitaciones
+y = data$Ingreso
+
+plot(x=x, y=y, 
+     pch=18, col="blue", 
+     xlab="Habitaciones", 
+     ylab="Ingreso",
+     main="Diagrama de dispersion")
+```
+
+5. Para llevar a cabo la regresión simple utilizamos la función lm() escribiendo primero la variable dependiente y luego la independiente colocando en medio el simbolo “~" (alt + 126). Para ver un resumen del modelo usamos la función ‘summary()’ y si queremos extraer los coeficientes (pendiente e intercepto) escribimos “$coefficients” al lado del nombre del modelo que se dio a la regresión.
+
+```{r}
+
+modelo = lm(y ~ x)
+
+summary(modelo)
+
+modelo$coefficients
+```
+### Escribiendo la ecuación
+
+Con los resultados obtenidos podemos escribir la ecuación obtenida.
+
+La ecuación de regresión lineal será:
+$$ \hat y = \hat\beta_0 + \hat\beta_1 x$$
+y = 1381.88 + 1.478269x
+
+7. Para incluir la recta de regresión al diagrama de dispersión hecho anteriormente podemos usar la función “abline()”.
+
+```{r}
+plot(y ~ x , 
+     pch=15, col="blue", 
+     xlab="Habitaciones", ylab="Ingreso", main="Diagrama de dispersion")
+
+abline(modelo, col='red', lwd=2)
+```
+
+8. Si queremos hacer una predicción a partir de la ecuación de regresión, asignamos un valor a la variable independiente habitaciones que no está en la muestra (x=70) y aplicamos la función “predict()” que tiene como parámetros el modelo y el valor de la variable independiente. Se puede hacer una serie de predicciones utilizando la función seq() (secuencia) en la variable independiente y siguiendo un proceso similar al caso anterior.
+
+```{r}
+habitaciones = data.frame(x=70)
+habitaciones
+
+ingreso_est = predict(object = modelo, newdata = habitaciones)
+ingreso_est
+```
+
+```{r}
+
+
+habitaciones = data.frame(x=seq(70, 200, 10))
+habitaciones
+
+ingreso_est = predict(object = modelo, newdata = habitaciones)
+as.data.frame(ingreso_est)
+```
+
+

@@ -1,0 +1,3 @@
+"0","plot(y ~ x , "
+"0","     pch=15, col=""blue"", "
+"0","     xlab=""Habitaciones"", ylab=""Ingreso"", main=""Diagrama de dispersion"")"

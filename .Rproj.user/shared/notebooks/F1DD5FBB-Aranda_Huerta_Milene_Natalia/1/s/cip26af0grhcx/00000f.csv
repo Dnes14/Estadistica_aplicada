@@ -1,0 +1,88 @@
+"0","install.packages(""readxl"")"
+"2","Installing package into ‘/home/daniel/R/x86_64-pc-linux-gnu-library/4.4’
+(as ‘lib’ is unspecified)
+"
+"2","trying URL 'https://cran.rstudio.com/src/contrib/readxl_1.4.5.tar.gz'
+"
+"2","Content type 'application/x-gzip'"
+"2"," length 1636512 bytes (1.6 MB)
+"
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","
+"
+"2","downloaded 1.6 MB
+
+"
+"2","* installing *source* package ‘readxl’ ...
+"
+"2","** package ‘readxl’ successfully unpacked and MD5 sums checked
+"
+"2","** using staged installation
+"
+"2","** libs
+"
+"2","using C compiler: ‘gcc (GCC) 14.2.1 20250207’
+"
+"2","using C++ compiler: ‘g++ (GCC) 14.2.1 20250207’
+"
+"1","g++ -std=gnu++17 -I""/usr/include/R/"" -DNDEBUG -Iunix -I. -I'/home/daniel/R/x86_64-pc-linux-gnu-library/4.4/cpp11/include' -I'/home/daniel/R/x86_64-pc-linux-gnu-library/4.4/progress/include' -I/usr/local/include   -fvisibility=hidden -fpic  -march=x86-64 -mtune=generic -O2 -pipe -fno-plt -fexceptions         -Wp,-D_FORTIFY_SOURCE=3 -Wformat -Werror=format-security         -fstack-clash-protection -fcf-protection         -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -Wp,-D_GLIBCXX_ASSERTIONS -g -ffile-prefix-map=/build/r/src=/usr/src/debug/r -flto=auto -ffat-lto-objects   -c cpp11.cpp -o cpp11.o
+"
+"1","g++ -std=gnu++17 -I""/usr/include/R/"" -DNDEBUG -Iunix -I. -I'/home/daniel/R/x86_64-pc-linux-gnu-library/4.4/cpp11/include' -I'/home/daniel/R/x86_64-pc-linux-gnu-library/4.4/progress/include' -I/usr/local/include   -fvisibility=hidden -fpic  -march=x86-64 -mtune=generic -O2 -pipe -fno-plt -fexceptions         -Wp,-D_FORTIFY_SOURCE=3 -Wformat -Werror=format-security         -fstack-clash-protection -fcf-protection         -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -Wp,-D_GLIBCXX_ASSERTIONS -g -ffile-prefix-map=/build/r/src=/usr/src/debug/r -flto=auto -ffat-lto-objects   -c XlsWorkBook.cpp -o XlsWorkBook.o
+"
+"2","make: *** [/usr/lib64/R/etc/Makeconf:204: XlsWorkBook.o] Interrupt
+"
+"2","ERROR: compilation failed for package ‘readxl’
+"
+"2","* removing ‘/home/daniel/R/x86_64-pc-linux-gnu-library/4.4/readxl’
+"
+"2","* restoring previous ‘/home/daniel/R/x86_64-pc-linux-gnu-library/4.4/readxl’
+"

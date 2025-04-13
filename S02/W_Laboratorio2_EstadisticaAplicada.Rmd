@@ -1,0 +1,37 @@
+---
+title: "Representación gráfica de los datos - FERNANDEZ"
+author: "Fernandez Cuyubamba Wilmer Manuel"
+date: "2025-03-26"
+output: html_document
+---
+
+#### TRANSLADAR LA DATA DEL DOCUMENTO A UN ARCHIVO .TXT Y LEERLO EN RSTUDIO
+##### CARGA EN FORMATO TABLA
+```{r data}
+data = read.table("seguridad.txt", sep="", header=T)
+data
+```
+
+#### REALIZAR UN RESUMEN DE LOS PRINCIPALES ESTADISTICOS DESCRIPTIVOS
+
+```{r}
+summary(data)
+```
+
+#### DIAGRAMA DE DISPERSION 
+```{r}
+
+plot(data$Volumen_de_ventas, data$Violaciones,
+main = "Diagrama de Dispersión: Volumen de Ventas vs Violaciones de Seguridad",
+xlab = "Volumen de Ventas",
+ylab = "Violaciones de Seguridad",
+pch = 19, col = "red",
+ylim = c(0, 40))
+```
+
+#### INTERPRETACIONES 
+Podemos encontrar 3 formas de poder interpretar este diagrama:
+Tendencia Negativa: Observamos que mediante el eje X se aumenta los valores las violaciones de seguridad disminuyen en cantidad, por lo que podemos decir que podria existir una tendencia negativa.
+Variabilidad en los datos: Hay una dispersión significativa en los puntos, lo que sugiere que la relación no es perfectamente linea
+Valores Atipicos: Algunos puntos podrían considerarse atípicos si están muy alejados del patrón general. Identificarlos ayudaría a entender qué factores adicionales pueden estar influyendo.
+

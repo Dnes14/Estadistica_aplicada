@@ -1,0 +1,11 @@
+Ciudad	Volumen_de_ventas	Violaciones
+St.Louis	416 11.9
+Atlanta		375 7.3
+Houston		237 10.6
+Boston		207 22.9
+Chicago		200 6.5
+Denver		193 15.2
+Dallas		156 18.2
+Baltimore	155 21.7
+Seatle/Tacoma	140 31.5
+San_Francisco	110 20.7

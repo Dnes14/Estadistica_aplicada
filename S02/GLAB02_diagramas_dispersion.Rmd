@@ -1,0 +1,236 @@
+---
+title: 'Semana 2: Representación gráfica de los datos'
+author: "TECSUP"
+date: "4/4/2023"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Lectura de base de datos
+
+```{r data}
+data = read.table("celulares.txt", sep="", header=T)
+# data3 = read.table("seguridad.txt", sep="\t", header=T)
+# data4 = read.table("publicidad.txt", sep="", header=F)
+data = data[-1]
+data
+```
+
+## Medidas descrptivas
+
+```{r descriptivos}
+summary(data)
+```
+
+## Diagrama de dispersión
+
+```{r}
+plot(x = data, pch=15, col="red", type="p", main="Diagrama de dispersion")
+```
+```{r}
+#definir valores
+set.seed(12345555)
+x <- seq(1, 20, by = 1) 
+x
+x[3]
+```
+
+```{r}
+# Tipos de marcadores que se quieren usar
+(marker_types <- 1:20 )
+```
+
+
+```{r}
+# Definir los datos
+set.seed
+x <- seq(1, 20, by = 1)  # Valores de x
+y <- rnorm(20)           # Valores de y generados aleatoriamente
+
+# Tipos de marcadores que se quieren usar
+marker_types <- 1:20 
+
+# Crear un gráfico vacío
+plot(x, y, type = "n", 
+     xlab = "X", ylab = "Y", main = "Tipos de Marcadores en R")
+
+# Bucle for para agregar puntos con diferentes marcadores
+for (i in 1:length(marker_types)) {
+  points(x[i], y[i], 
+         pch = marker_types[i], 
+         cex = 1.6, col = i)  # Agregar punto con tipo específico
+  text(x[i] + 0.4, y[i] + 0,
+       marker_types[i], cex = 0.8)  # Imprimir tipo de marcador como texto
+}
+```
+
+```{r}
+# Definir los datos
+x <- seq(0, 10, by = 0.1)  # Valores de x
+y <- sin(x)                # Valores de y (seno de x)
+
+# Tipos de líneas que se quieren usar
+line_types <- c("solid", "dashed", "dotted", "dotdash", "longdash", "twodash")
+
+# Crear un gráfico vacío
+plot(x, y, type = "n", 
+     ylim = c(-1.5, 1.5), 
+     xlab = "X", 
+     ylab = "Y", 
+     main = "Tipos de Líneas en R")
+
+# Bucle for para agregar líneas al gráfico
+for (i in 1:length(line_types)) {
+  lines(x, sin(x + (i - 1) * 0.5), lty = i, lwd = 2.5, col = i)  # Agregar línea con tipo específico
+}
+
+# Agregar leyenda
+legend("topright", legend = line_types, lty = 1:length(line_types), col = 1:length(line_types), title = "Tipos de Líneas")
+```
+
+## Separando en grupos
+
+```{r agrupando}
+grupo = as.factor(ifelse(data$Tiempo < 3,"Grupo 1","Grupo 2"))
+
+plot(data, pch=as.numeric(grupo), col=c("red","blue"), 
+main="Gráfico de dispersión agrupado")
+
+legend("topleft", legend=c("Grupo 1","Grupo 2"),
+       lwd=3, 
+       lty=c(2,1),
+       col=c("red","blue"))
+```
+
+## Escalando
+
+```{r}
+data2 <- scale(x = data)
+data2
+
+plot(data2, pch=6, cex=0.75, col="blue",main="Gráfico de dispersión con escalamiento")
+```
+
+Con datos de mtcars
+
+```{r}
+dim(mtcars)
+# 32 11
+
+head(mtcars, 12)
+```
+
+```{r}
+x = mtcars$wt
+y = mtcars$mpg
+```
+
+Con títulos y sin recuadro
+
+```{r}
+plot(x, y, 
+     main = "Relación entre peso y millas por galon",
+     xlab = "Peso", ylab = "Millas por Galon",
+     pch = 20, cex=1,
+     frame = F)
+
+# Con linea de regresion
+abline(reg = lm(y ~ x, data = mtcars), col = "blue", lw=2)
+```
+
+
+```{r}
+# Definir los datos
+set.seed(1234)
+x <- seq(1, 20, by = 1)  # Valores de x
+y <- rnorm(20)           # Valores de y generados aleatoriamente
+
+# Tipos de marcadores que se quieren usar
+marker_types <- 1:20 
+
+# Crear un gráfico vacío
+plot(x, y, type = "n", 
+     xlab = "X", ylab = "Y", main = "Tipos de Marcadores en R")
+
+# Bucle for para agregar puntos con diferentes marcadores
+for (i in 1:length(marker_types)) {
+  points(x[i], y[i], pch = marker_types[i], cex = 1.6, col = i)  # Agregar punto con tipo específico
+  text(x[i] + 0.4, y[i] + 0, marker_types[i], cex = 0.8)  # Imprimir tipo de marcador como texto
+}
+```
+
+### Con distinción de grupos o segmentos
+
+Convertir cyl de dato numérico a 'factor'
+```{r}
+str(mtcars)
+mtcars$cyl = as.factor(mtcars$cyl)
+str(mtcars)
+#?mtcars
+```
+
+Para ggplot la clave esta en usar geom_point()
+  
+geom_point(size, color, shape)
+
+```{r}
+library(ggplot2)
+
+ggplot(mtcars, aes(x=wt, y=mpg)) + 
+  geom_point()
+```
+
+Cambio tamaño y marcador
+```{r}
+ggplot(mtcars, aes(x=wt, y=mpg)) +
+  geom_point(size=2, shape=21)
+```
+
+```{r fig.height=12, fig.width=10}
+# datos
+x <- seq(1, 5, by = 1)  # Valores de x
+y <- seq(1, 5, by = 1)  # Valores de y
+data <- data.frame(x, y)
+
+# Tipos de marcadores que se quieren usar
+marker_types <- 0:17
+
+# Crear una lista para almacenar los gráficos
+graficos <- list()
+
+# Gráficos con diferentes marcadores
+for (i in marker_types) {
+  p <- ggplot(data, aes(x = x, y = y)) +
+    geom_point(shape = i, size = 1.5, colour="red") +  
+    labs(title = paste("Tipo de marcador:", i), x = "X", y = "Y") 
+  
+  # Almacenar el gráfico en la lista
+  graficos[[i + 1]] <- p
+}
+
+# Mostrar los gráficos en una cuadrícula
+library(gridExtra)
+do.call(grid.arrange, c(graficos, ncol = 4))  
+```
+
+```{r}
+ggplot(mtcars, aes(x=wt, y=mpg)) + 
+  geom_point()+
+  labs(title="Millas por galon \n de acuerdo al peso",
+       x="Peso (lb/1000)", y = "Millas/(US) gallon") +
+
+ geom_smooth(method=lm, color="blue")
+```
+
+Cambio de color y forma del marcador por
+```{r}
+ggplot(mtcars, aes(x=wt, y=mpg, color=cyl, shape=cyl)) + 
+  geom_point() +
+  labs(title="Millas por galon \n de acuerdo al peso",
+       x="Peso (lb/1000)", y = "Millas/(US) gallon") +
+   geom_smooth(method=lm, se= FALSE, fullrange=F)
+```
+

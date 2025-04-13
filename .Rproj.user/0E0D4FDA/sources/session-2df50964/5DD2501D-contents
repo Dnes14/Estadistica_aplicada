@@ -1,0 +1,86 @@
+---
+title: "Laboratorio_4_EA"
+author: "Aranda, Milene"
+date: "2025-04-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+#1. El director del Zoológico de Tampa estudia la relación entre elnúmero de visitantes, en miles, y la temperatura alta, en gradosFahrenheit. Selecciona una muestra de 15 días y la informaciónmuestral recopilada se tabula a continuación.
+
+```{r}
+ruta_excel = "zoologico.xlsx"
+```
+
+```{r}
+# a. Traslade la información de la tabla mostrada a un documento de Excel, asígnele el nombre ‘zoológico.xlsx’, lea la base de datos y elabore un diagrama de dispersión para las variables numéricas.
+```
+
+
+### Leyendo la base de datos
+
+```{r}
+library(readxl)
+```
+```{r}
+zoologico = read_excel (ruta_excel, sheet="Hoja1")
+zoologico = zoologico[-1]
+zoologico = as.data.frame(zoologico)
+zoologico
+```
+
+```{r}
+str(zoologico)
+```
+
+```{r}
+pairs(zoologico)
+library(PerformanceAnalytics)
+```
+
+```{r}
+chart.Correlation(zoologico)
+```
+
+```{r}
+#b. Calcule e interprete el coeficiente de correlación y el de determinación.
+```
+
+```{r}
+colnames(zoologico)
+```
+```{r}
+cor(zoologico) # Matriz de correlación
+```
+```{r}
+# El coeficiente de correlación (0.4567093) indica que entre la variable Visitantes(Miles) y Temperatura(°F) tiene una correlaciòn positiva moderada.
+```
+
+```{r}
+x = zoologico$`Visitantes(Miles)`
+y = zoologico$`Temperatura(°F)`
+coef_corr = cor(x, y, method = "pearson")
+coef_corr # Coeficiente de correlacion
+```
+```{r}
+coef_deter = coef_corr^2
+coef_deter # Coeficiente de determinacion
+```
+####El coeficiente de determinaciòn (0.2085834) indica la variabilidad en el número de visitantes puede explicarse por los cambios en la temperatura.
+
+```{r}
+#c. Realice la prueba de normalidad Shapiro-Wilk y diga si estassiguen o no una distribución normal.
+```
+
+
+```{r}
+shapiro.test(x)
+```
+```{r}
+# Ya que p-value > 0.05 se acepta que la variable peso sigue una distribución normal.
+```
+

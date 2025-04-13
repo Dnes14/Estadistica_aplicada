@@ -1,0 +1,8 @@
+"0","x = data$Habitaciones"
+"0","y = data$Ingreso"
+"0",""
+"0","plot(x=x, y=y, "
+"0","     pch=18, col=""blue"", "
+"0","     xlab=""Habitaciones"", "
+"0","     ylab=""Ingreso"","
+"0","     main=""Diagrama de dispersion"")"

@@ -1,0 +1,120 @@
+---
+title: "LABS03:ANÁLISIS DE REGRESIÓN. ECUACIÓN DE REGRESIÓN"
+author: " Aranda Huerta, Milene ||  Escriba Flores, Daniel"
+date: "2025-04-02"
+output:
+  pdf_document:
+    toc: true
+    toc_depth: 2
+  html_document: 
+    toc: true
+    toc_depth: 2
+---
+
+---
+
+Contexto:
+
+Cargo, empresa que realiza entrega de pedidos a todo el Perú, desea llevar a cabo un estudio para ver la relación entre la distancia de recorrido de un embarque y el tiempo que demora en llegar.
+![](tabla.png)   
+
+Considerando a la distancia de envío como la variable independiente y al tiempo de envío como
+la variable dependiente, haga lo siguiente:
+
+# A. Preparacion de Datos - Diagrama de dispersion
+Traslade la información de la tabla mostrada a un documento de texto, asígnele el nombre ‘entregas.txt’ y elabore un diagrama de dispersión para las variables numéricas.
+
+### Lectura de datos
+
+```{r cars}
+#Leemos el archivo redactado
+
+data = read.table("entrega.txt" , sep="", header=T)
+data = data[-1]
+data
+```
+
+```{r, echo=FALSE}
+# Revisamos  los estadisticos
+
+summary(data)
+```
+
+### Diagrama de dispersion
+
+```{r}
+
+x = data$distancia.millas
+y = data$T.envio.dias
+
+plot(x=x, y=y, 
+     pch=18, col="blue", 
+     xlab="Distancias (millas)", 
+     ylab="Tiempo de envio en (dias)",
+     main="Diagrama de dispersion")
+```
+
+# B.Regresion Lineal
+
+Realice un análisis de regresión, escriba la ecuación y grafique la recta de regresión.
+
+Creamos el modelo
+
+```{r}
+
+modelo = lm(y ~ x)
+
+#summary(modelo)
+
+modelo$coefficients
+```
+### Escribiendo la ecuación
+
+Con los resultados obtenidos podemos escribir la ecuación obtenida.
+
+La ecuación de regresión lineal será:
+$$ \hat y = \hat\beta_0 + \hat\beta_1 x$$
+y = -7.12639554 + 0.02139064x
+
+
+### Graficamos la recta de regresion
+
+```{r}
+plot(y ~ x , 
+     pch=15, col="blue", 
+     xlab="Distancias (millas)", ylab="Tiempo de envio en (dias)", main="Diagrama de dispersion")
+
+abline(modelo, col='red', lwd=2)
+```
+
+# C. Pronostico
+
+Realice un pronóstico para distancias que van de 900 a 1000 millas en intervalos de 10.
+
+
+```{r}
+
+distancias_futuras = data.frame(x=seq(900, 1000, 10))
+
+# Hacer las predicciones
+dias_est = predict(object = modelo, newdata = distancias_futuras)
+
+# Combinar distancias y predicciones en un solo data frame
+resultados = data.frame(Distancia = distancias_futuras$x, 
+                        Dias_estimados = dias_est)
+
+# Mostrar el data frame
+
+
+# utilizamos la siguiente libreria, para una mejor visualizacion
+library(knitr)
+kable(resultados, digits = 5)
+```
+
+##  Interpretacion
+
+- La ecuación que obtuvimos nos  indica que por cada milla adicional recorrida, el valor de la variable dependiente aumenta en 0.02139064 unidades. Partiendo de un valor base negativo de -7.12639554, esto permite predecir valores que oscilan entre 12.12 y 14.26 para distancias de 900 a 1000 millas.
+
+
+
+
