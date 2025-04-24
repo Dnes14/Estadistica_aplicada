@@ -1,5 +1,0 @@
-"0","data = read_excel (ruta_excel, sheet=""Hoja1"")"
-"0",""
-"0","data = data[-1]"
-"0","data = as.data.frame(data)"
-"0","data"

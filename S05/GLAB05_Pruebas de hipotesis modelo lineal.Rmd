@@ -1,0 +1,151 @@
+---
+title: "GLAB05 PH modelo lineal"
+author: "EFN"
+date: "2023-04-17"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## SEMANA 5: PRUEBAS DE HIPOTESIS PARA MODELO LINEAL
+#### GUIA DE LABORATORIO
+Revise junto con el docente el ejemplo de aplicación para que luego pueda resolver el caso de aplicación propuesto.
+
+### EJEMPLO DE APLICACIÓN
+
+1. Primero creamos un archivo R Markdown, colocando un título y autor que irán en la cabecera.
+
+2. Ahora leeremos la base de datos llamada “canes”, la cual contiene información sobre el peso de un grupo de canes (en libras) y su consumo de alimento diario (medido en tazas estándar). Esta vez se trabajará con un documento de Excel. Para ello se instalará el paquete “readxl” en la consola,
+luego se llama a esta con ‘library(readxl)’.
+
+Se puede buscar dinamicamente la ruta de nuestro archivo por medio de file.choose().
+```{r importando}
+
+library(readxl)
+
+# file.choose()
+```
+
+3. Asignamos la ruta de nuestro archivo a una variable (para este caso “ruta_excel' y si queremos ver cuáles son los nombres de las hojas de nuestro documento de Excel utilizamos “excel_sheets(). Una vez hecho esto podemos desechar o poner como comentario ‘file.choose().
+
+```{r}
+#ruta_excel = "C:/Users/User/Downloads/2023-1/Estadistica_Aplicada/Sesion05/canes.xlsx"
+#excel_sheets(ruta_excel)
+
+```
+#### Leyendo la base de datos
+
+4. Para leer la primera hoja, usamos la función read_excel() y colocando como parámetro "sheet="Hoja1”. Usamos la función “as.data.frame()" para mostrarlo como un data frame clásico.
+
+```{r data}
+data = read_excel("canes.xlsx", sheet="Hoja1")
+
+data = data[-1]
+data = as.data.frame(data)
+data
+```
+
+## Análisis de regresión
+
+5. Vamos a realizar ahora un análisis de regresión lineal simple asignando la variable independiente (‘data$Peso’) y la dependiente (‘data$Consumo’) de la data. Luego utlilizaremos la función lm() escribiendo primero la variable dependiente y después la independiente. Podemos mostrar un gráfico de dispersión junto con la recta de regresión.
+
+```{r ecuación de regresión}
+x = data$Peso
+y = data$Consumo
+
+modelo = lm(y ~ x)
+
+modelo$coefficients
+
+plot(y ~ x, pch=20, col="red", xlab="Peso", ylab="Consumo", main="Diagrama de dispersion")
+
+abline(modelo,col="blue")
+```
+
+### Supuesto de Linealidad entre la variable dependiente y la independiente
+
+6. Para probar la linealidad entre las variables haremos uso de la función anova() que se basa en el estadístico F. Si el p-valor es menor a 0.05, se debe rechazar la hipótesis nula Ho de que B1 = 0 (no existe una relación lineal entre X e Y), y en caso contrario se debe aceptar Ho.
+
+```{r F}
+
+anova(modelo)  # analysis of variance
+
+```
+DF : grados de libertad
+Sum Sq: suma de cuadrados
+Mean Sq: Sum Sq / DF
+F value: estadistico F
+Pr(F cal > F teorico): 3.47 e-14
+
+El p-valor (3.47 e-14) es menor a 0.05 => se debe rechazar la hipótesis nula Ho de que B1 = 0. O sea, se acepta la H1 de que si existe una relacion lineal entre X e Y.
+
+
+### Supuesto de Independencia de los residuos
+
+7. Si queremos probar la independencia entre los errores (residuos) hacemos uso de la función dwtest() que se basa en el estadístico Durbin-Watson. 
+
+Previo a ellos debemos instalar el paquete ‘lmtest’. Si el p-valor (‘p-value’) es menor a 0.05, se debe rechazar la hipótesis nula Ho, de que NO existe autocorrelación entre los errores, y en caso contrario se debe aceptar Ho.
+
+Ejecutar en la consola: **install.packages("lmtest") antes de invocarlo con library(lmtest)
+
+```{r prueba durbin-watson, warning=FALSE}
+
+library(lmtest)
+
+dwtest(modelo)
+
+```
+Ho: No hay autocorrelacion (que es buen supuesto)
+H1: SI hay ...
+
+p-value = 0.08 . Entonces se acepta la Ho de que NO hay autocorrelacion de los residuos.
+
+### Supuesto de Normalidad de los residuos
+
+8. Si queremos probar la normalidad de los residuos hacemos uso de la función shapiro.test() que se basa en el estadistico Shapiro-Wilk sobre los residuos. Si el p-valor (‘p-value’) es menor a 0.05, se debe rechazar la hipótesis nula Ho de que los residuos se distribuyen normalmente, y en caso contrario se debe aceptar Ho. 
+
+```{r prueba shapiro-wilk}
+
+residuos = resid(modelo)
+
+shapiro.test(x = residuos)
+
+```
+El p-value = 0.17. Ya que el p-value es mayor que 0.05 entonces se acepta la Ho de que los residuos se distribuyen normalmente (lo que es bueno...)
+
+
+Tambien podemos verificar la normalidad de los residuos por medio de un gráfico Q-Q, en el que se deben encontrar alrededor de la recta.
+
+```{r}
+plot(modelo, 2)
+
+```
+
+### Supuesto de Varianza constante (homocedasticidad) de los residuos
+
+Por ultimo, para probar la varianza constante (homocedasticidad) de los residuos hacemos uso de la función bptest() que se basa en el estadistico Breusch-Pagan sobre los residuos. Previo a ellos debemos instalar el paquete “lmtest" en caso de no tenerlo. 
+
+Si el p-valor (‘p-value’) es menor a 0.05, se debe rechazar la hipótesis nula Ho, de que los residuos tienen varianza constante, y en caso contrario aceptar Ho. 
+
+Podemos hacer un gráfico de las raices cuadradas de los residuales estandarizados.
+
+```{r prueba Breusch-Pagan}
+
+library(lmtest)
+
+bptest(modelo)
+
+```
+Ho: Los residuos tienen varianza constante (lo que es bueno...)
+H1: Los residuso no tienen varianza constante.
+
+El p-value = 0.4581. Ya que es mayor que 0.05 entonces se acepta la Ho de que los residuos tienen varianza constante.
+
+```{r}
+
+plot(x = modelo, which = 3)
+
+```
+

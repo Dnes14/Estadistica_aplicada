@@ -1,5 +1,0 @@
-"0","library(corrplot)"
-"0",""
-"0","M = cor(data)"
-"0",""
-"0","corrplot(M, method=""ellipse"")"

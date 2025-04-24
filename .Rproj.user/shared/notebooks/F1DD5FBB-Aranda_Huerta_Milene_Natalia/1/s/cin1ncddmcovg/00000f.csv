@@ -1,4 +1,0 @@
-"0","zoologico = read_excel (ruta_excel, sheet=""Hoja1"")"
-"0","zoologico = zoologico[-1]"
-"0","zoologico = as.data.frame(zoologico)"
-"0","zoologico"
