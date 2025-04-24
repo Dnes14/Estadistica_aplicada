@@ -1,0 +1,133 @@
+---
+title: 'Lab06 - PRONÓSTICO PARA VALOR MEDIO E INDIVIDUAL'
+author: "Escriba Flores, Daniel Agustin"
+date: "2025-04-24"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    toc: true
+    toc_depth: 3
+  html_document: 
+    toc: true
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Contexto: 
+
+La gerencia de una empresa embotelladora de bebidas gaseosas desea desarrollar un método para distribuir los costos de entrega a los clientes. Aunque un costo se relaciona claramente con el tiempo de viaje en una ruta específica, otra variable de costo refleja el tiempo requerido para descargar las cajas de bebida refrescante en el punto de entrega. El tiempo de entrega y el número de cajas entregadas están registradas en la base de datos ‘delivery.xlsx’.
+
+Deseando predecir el tiempo de entrega (en min) con base al número de cajas entregadas, haga lo siguiente:
+
+
+# Pregunta A: Analisis de regresion y diagrama de dispersion
+
+a. Lea la base de datos y haga un análisis de regresión que muestre el diagrama de dispersión junto con su recta de regresión.
+
+```{r Importando datos }
+library(readxl)
+library(pander) 
+
+data = read_excel("delivery.xlsx", sheet="Hoja1")
+data = data[-1]
+data = as.data.frame(data)
+
+# Usar pander para formatear la tabla
+pander(data, caption = "Tabla de datos de delivery")
+```
+
+## Regresion Lineal
+
+
+```{r ecuación de regresión}
+x = data$Cajas
+y = data$Tiempo
+
+modelo = lm(y ~ x)
+summary(modelo)
+modelo$coefficients
+```
+
+## Grafico de dispersion
+
+```{r}
+# Gráfico de dispersión
+plot(x, y, main = "Diagrama de Dispersion", 
+     xlab = "Cajas", ylab = "Tiempo", pch = 19, col = "blue")
+
+# Agregar línea de regresión
+abline(modelo, col = "red", lwd = 2)
+```
+
+# Pregunta B: Intervalo de confianza de la media, intervalo de prediccion.
+
+b. Encuentre un intervalo de confianza para la media y un intervalo de predicción para el tiempo de entrega cuando el número de cajas entregadas es 150 asumiendo un nivel de confianza de 98%. Interprete ambos resultados.
+
+## Intervalo de confianza para la media.
+
+```{r intervalo de confianza y prediccion}
+# Nivel de confianza
+nc = 0.98
+
+nuevo = data.frame(x=150) # cajas entregadas = 150
+
+predict(object=modelo, newdata=nuevo, int="confidence", 
+        level=nc)
+```
+
+## Intervalo de prediccion
+
+```{r}
+nuevo = data.frame(x=150) # cajas entregadas= 150
+
+predict(object=modelo, newdata=nuevo, interval="prediction",
+        level=nc)
+```
+
+## Interpretacion
+
+- Con un nivel de confianza del 98%, el intervalo de confianza para la media del tiempo de entrega cuando el número de cajas entregadas es 150 se estima entre 44,67 y 47,01 minutos, lo que indica que estamos seguros de que la media poblacional del tiempo de entrega para pedidos de esta cantidad de cajas se encuentra dentro de este rango.
+
+- Asimismo, el intervalo de predicción para un nuevo pedido individual con 150 cajas se proyecta entre 40,64 y 51,04 minutos, reflejando que, con el mismo nivel de confianza, esperamos que el tiempo de entrega de un único pedido future con 150 cajas se encuentre en este intervalo. 
+
+- El intervalo de predicción es más amplio debido a la mayor incertidumbre inherente a la predicción de valores individuales en contraposición a la estimación de la media poblacional.
+
+
+# Pregunta C: Intercarlo para valores de "y" y  grafico
+
+c. Halle los intervalos de predicción para todos los valores de 𝑦 asumiendo un nivel de confianzade 98% y grafique los intervalos para la media y los valores de 𝑦, que contenga además el diagrama de dispersión y la recta de regresión.
+
+## Intervalos para todos los y
+
+```{r intervalos para todos los y, message=FALSE, warning=FALSE}
+y_futuro = predict(object=modelo, interval="prediction", 
+                   level=0.98)
+
+dim(y_futuro)
+y_futuro
+```
+
+## Cuadro final de los datos originales con sus respectivos intervalos de confianza
+
+```{r}
+data_nueva = cbind(data, y_futuro) # cbind
+pander(data_nueva, caption = "Tabla de datos de delivery con intervalos de confianza")
+```
+
+
+## Grafico de intervalos 
+
+```{r gráficos de intervalos}
+library(ggplot2)
+ggplot(data = data_nueva, aes (x=Cajas, y=Tiempo)) +
+ geom_point (col="red") +
+ geom_smooth(method=lm, formula= y~x, 
+             se=T, level=nc, 
+             col="blue", fill="orange") +
+ geom_line(aes(y=lwr), color="purple", linetype="dashed") +
+ geom_line(aes(y=upr), color="purple", linetype="dashed") +
+ theme_light()
+```
