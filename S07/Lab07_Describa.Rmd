@@ -1,0 +1,170 @@
+---
+title: "Lab 07 - ANÁLISIS DE REGRESIÓN MÚLTIPLE. ECUACIÓN DE REGRESIÓN MÚLTIPLE"
+author: "Daniel Escriba Flores"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    toc: true
+    toc_depth: 3
+  html_document: 
+    toc: true
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Contexto: 
+
+El Times-Observer es un periódico en la ciudad Metro. Al igual que muchos periódicos en la ciudad, el Times-Observer pasa por dificultades financieras. La gerente de circulación estudia otros periódicos en ciudades similares en Estados Unidos y Canadá, con interés particular en las variables que se relacionan con el número de suscriptores. Esta reúne la informacion muestral de 25 periódicos en ciudades similares empleando la siguiente notación:
+
+- Suscriptores : Número de suscriptores (en miles)
+- Población : Población metropolitana (en miles)
+- Presupuesto : Presupuesto en publicidad del periódico (miles de dólares)
+- Ingreso : Ingreso familiar medio en el área metropolitana (miles de dólares)
+
+Deseando predecir el número de suscriptores con base a las otras variables, haga lo siguiente:
+
+---
+
+# Pregunta A: Datos, D-Dispersion e interpretacion
+
+a. Lea la base de datos, elabore un diagrama de dispersión para cada variable independiente con la dependiente indicando e interpretando sus respectivos valores de coeficiente de correlación.
+
+## Lectura de datos
+
+```{r Importando datos , warning=FALSE }
+library(readxl)
+library(pander)
+library(equatiomatic)
+
+data = read_excel("periódicos.xlsx", sheet="Hoja1")
+data = data[-1]
+data = as.data.frame(data)
+
+# Usar pander para formatear la tabla
+pander(data, caption = "Tabla de datos de suscripciones a periodicos de USA y Canada")
+```
+
+### Medidas descriptivas
+
+```{r descriptivos}
+summary(data)
+```
+
+## Diagrama de dispersion
+
+```{r message=FALSE, warning=FALSE}
+#install.packages (”GGally”)
+
+library(ggplot2)
+library(GGally)
+
+ggpairs(data, 
+        upper = list(continuous = "cor", na = "na"),
+        columns=1:4,
+        lower=list(continuous="smooth"),
+        diag=list(continuous="barDiag"), 
+        axisLabels="none")
+```
+
+## Interpretacion de Correlaciones con la variable dependiente
+
+- Población (0.643): Correlación positiva fuerte y significativa. A mayor población, mayor número de suscriptores.
+
+- Presupuesto (0.709): Correlación positiva muy fuerte y significativa. Los presupuestos más altos están asociados con más suscriptores.
+
+- Ingreso (0.710): La correlación más fuerte, positiva y significativa. Los mayores ingresos predicen claramente más suscriptores.
+
+---
+
+# Pregunta B: Regresion multiple y Ecuacion
+
+b. Realice un análisis de regresión múltiple y escriba la ecuación de regresión múltiple.
+
+## Regresion multiple
+
+```{r}
+modelo = lm(formula = Suscriptores ~ Población +
+              Presupuesto + 
+              Ingreso, 
+            data= data)
+
+summary(modelo)
+
+modelo$coefficients
+```
+
+### Interpretación del Modelo
+
+Bondad de ajuste: R² = 0.8348 (83.48% de variabilidad explicada - excelente ajuste)
+
+Variables significativas (todas con p < 0.01):
+
+Población: cada aumento de 1 unidad aumenta 0.0075 suscriptores
+
+Presupuesto: cada unidad adicional aporta 0.051 suscriptores
+
+Ingreso: el predictor más fuerte (1.097 suscriptores por unidad)
+
+## Ecuacion de regresion multiple
+
+
+```{r, echo=FALSE}
+cat("Ecuación de regresión:\n")
+cat("Suscriptores =", coef(modelo)[1], "+", coef(modelo)[2], "* Población +", 
+    coef(modelo)[3], "* Presupuesto +", coef(modelo)[4], "* Ingreso\n")
+```
+
+
+```{r}
+# Versión básica
+extract_eq(modelo)
+
+# Versión con valores de coeficientes
+extract_eq(modelo, use_coefs = TRUE)
+
+```
+
+---
+
+# Pregunta C: Pronostico
+
+c. Realice un pronóstico cuando la población es de 600 000 habitantes, el presupuesto en publicidad del periódico es de 18 000 dólares y el ingreso familiar medio en el área metropolitana es de 36 000 dólares.
+
+```{r predicciones}
+predictores = data.frame(Población=600, Presupuesto=18, Ingreso=36)
+pander(predictores, caption = "Tabla de datos predictores")
+
+``` 
+
+```{r}
+
+costo_est = predict(object = modelo, newdata = predictores)
+```
+
+```{r, , echo=FALSE}
+cat("Suscriptores Estimados con  Población=600 000, Presupuesto=18 000, Ingreso=10 000 :\n\t", costo_est)
+```
+
+---
+
+# Conclusion 
+
+El modelo muestra que el ingreso y el presupuesto son los factores más importantes para predecir suscriptores, con un 83.5% de explicación (R²). 
+
+Para una ciudad con:
+
+- 600,000 habitantes
+
+- $18,000 de presupuesto publicitario
+
+- $36,000 de ingreso familiar promedio
+
+Se pronostican aproximadamente 39,210 suscriptores.
+
+Estos resultados demuestran que las condiciones económicas y las inversiones en marketing son determinantes clave para el crecimiento de la base de suscriptores del periódico.
+
+---
+

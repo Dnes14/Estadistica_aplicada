@@ -1,0 +1,93 @@
+---
+title: "SEMANA 7: ANALISIS DE REGRESION MULTIPLE"
+author: "EFN"
+date: "2023-04-26"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+## Importando librería
+
+```{r data}
+library(readxl)
+# file.choose()
+
+ruta_excel = "periódicos.xlsx"
+
+excel_sheets(ruta_excel)
+```
+
+### Leyendo la base de datos
+
+```{r importando}
+data = read_excel(ruta_excel, sheet="Hoja1")
+data = data[-1]
+data = as.data.frame(data)
+data
+```
+
+3. Podemos calcular algunas medidas descriptivas con la función ‘summary()”.
+
+### Medidas descriptivas
+
+```{r descriptivos}
+summary(data)
+```
+
+4. Podemos generar gráficas de dispersión entre pares de variables y valor del coeficiente de correlación entre cada variable independiente con la dependiente mediante la función ggpairs(), pero debemos instalar previamente el paquete “GGally”.
+
+## Diagramas de dispersión
+```{r message=FALSE, warning=FALSE}
+#install.packages (”GGally”)
+
+library(ggplot2)
+library(GGally)
+
+ggpairs(data, 
+        upper = list(continuous = "cor", na = "na"),
+        columns=1:4,
+        lower=list(continuous="smooth"),
+        diag=list(continuous="barDiag"), 
+        axisLabels="none")
+```
+
+5. Para llevar a cabo la regresión múltiple utilizamos la función lm() escribiendo primero la variable dependiente y luego las independientes colocando en medio el simbolo “~" (podríamos definir previamente las variables con otros nombres o colocar sus nombre originales). 
+
+Para ver un resumen del modelo usamos la función summary() y si queremos extraer los coeficientes (pendientes e intercepto) escribimos “$coefficients” al lado del nombre del modelo que se dio a la regresión.
+
+## Modelo de regresión múltiple
+
+```{r}
+modelo = lm(formula = Suscriptores ~ Población +
+              Presupuesto + 
+              Ingreso, 
+            data= data)
+
+summary(modelo)
+
+modelo$coefficients
+```
+
+Varios resultados de summary() pueden ser extraídos, como R2.
+```{r}
+summary(modelo)$r.squared
+```
+
+
+
+```{r predicciones}
+predictores = data.frame(Población=600, Presupuesto=18, Ingreso=36)
+predictores
+
+costo_est = predict(object = modelo, newdata = predictores)
+
+cat("Costo estimado con presupuesto=600, Aislamiento=5, Antigüedad=10\n\t", costo_est)
+```
+
+
+

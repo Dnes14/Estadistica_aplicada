@@ -1,0 +1,150 @@
+---
+title: "SEMANA 7: ANALISIS DE REGRESION MULTIPLE"
+author: "EFN"
+date: "2023-04-26"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### GUIA DE LABORATORIO
+
+Revise junto con el docente el ejemplo de aplicación para que luego pueda resolver el caso de aplicación propuesto.
+
+### EJEMPLO DE APLICACIÓN
+1. Primero creamos un archivo R Markdown, colocando un título y autor que irán en la cabecera.
+
+2. Procederemos a leer la base de datos llamada “calefacción”, que contiene información sobre el costo de calefacción (en dólares), lo cual se quiere predecir con base a:
+ la temperatura exterior diaria media (en °F), 
+ el número de pulgadas de aislamiento en el ático y 
+ la antigüedad en años del calentador para un grupo de casas puestas en venta en una ciudad de Estados Unidos. 
+
+Se trabajará con un documento de Excel. Para ello se debe tener instalado el paquete ‘readxl’ en la consola. Luego, se llama a esta con library(readxl). 
+
+Luego buscamos la ruta de nuestro archivo por medio de file.choose() y la asignamos a una variable (para este caso ‘ruta_excel’) y si queremos ver cuáles son los nombres de las hojas de nuestro documento de Excel utilizamos ‘excel_sheets(). 
+
+Para leer dicha base de datos haremos uso de la función read_excel().
+
+## Importando librería
+
+```{r data}
+library(readxl)
+# file.choose()
+
+ruta_excel = "calefacción.xlsx"
+
+excel_sheets(ruta_excel)
+```
+
+### Leyendo la base de datos
+
+```{r importando}
+data = read_excel(ruta_excel, sheet="Hoja1")
+data = data[-1]
+data = as.data.frame(data)
+data
+```
+
+3. Podemos calcular algunas medidas descriptivas con la función ‘summary()”.
+
+### Medidas descriptivas
+
+```{r descriptivos}
+summary(data)
+```
+
+4. Podemos generar gráficas de dispersión entre pares de variables y valor del coeficiente de correlación entre cada variable independiente con la dependiente mediante la función ggpairs(), pero debemos instalar previamente el paquete “GGally”.
+
+## Diagramas de dispersión
+```{r message=FALSE, warning=FALSE}
+#install.packages (”GGally”)
+
+library(ggplot2)
+library(GGally)
+
+ggpairs(data, 
+        upper = list(continuous = "cor", na = "na"),
+        columns=1:4,
+        lower=list(continuous="smooth"),
+        diag=list(continuous="barDiag"), 
+        axisLabels="none")
+```
+
+5. Para llevar a cabo la regresión múltiple utilizamos la función lm() escribiendo primero la variable dependiente y luego las independientes colocando en medio el simbolo “~" (podríamos definir previamente las variables con otros nombres o colocar sus nombre originales). 
+
+Para ver un resumen del modelo usamos la función summary() y si queremos extraer los coeficientes (pendientes e intercepto) escribimos “$coefficients” al lado del nombre del modelo que se dio a la regresión.
+
+## Modelo de regresión múltiple
+
+```{r}
+modelo = lm(formula = Costo ~ Temperatura +
+              Aislamiento + 
+              Antigüedad, 
+            data= data)
+
+summary(modelo)
+
+modelo$coefficients
+```
+
+Varios resultados de summary() pueden ser extraídos, como R2.
+```{r}
+summary(modelo)$r.squared
+```
+
+7. Si queremos hacer una predicción a partir de la ecuación de regresión múltiple, asignamos un valor a cada variable independiente y aplicamos la función predict() que tiene como parámetros el modelo y el valor de las variables independientes. Por ejemplo, queremos estimar el costo de calefacción para una casa, cuya temperatura externa media del mes es de 30 grados (Temperatura=30), hay 5 pulgadas de aislamiento en el ático (Asilamiento=5) y el calentador tiene 10 años (Antigiiedad=10). 
+
+```{r predicciones}
+predictores = data.frame(Temperatura=30, Aislamiento=5, Antigüedad=10)
+predictores
+
+costo_est = predict(object = modelo, newdata = predictores)
+
+cat("Costo estimado con Temperatura=30, Aislamiento=5, Antigüedad=10\n\t", costo_est)
+```
+
+Se puede hacer una serie de predicciones utilizando la función seq() en una de las variables independientes manteniendo constantes a las otras y siguiendo un proceso similar al caso anterior.
+
+```{r}
+# predictores = data.frame(Temperatura = seq(30, 40, 1), Aislamiento=5, Antigüedad=10)
+predictores = data.frame(Temperatura = seq(30, 40, 1), Aislamiento= 5, Antigüedad=10)
+
+predictores
+```
+
+```{r}
+costo_est = predict(object = modelo, newdata = predictores)
+costo_est
+```
+
+Mostramos los costos predichos junto con las variables predictoras en un dataframe.
+```{r}
+cbind(costo_est, predictores)
+
+data_predichos  = cbind(round(costo_est,1), predictores)
+colnames(data_predichos)[1] = 'Costo predicho'
+
+data_predichos
+```
+
+Diversas combinaciones de valores en la variables independientes pueden ser posibles. Por ejemplo:
+
+```{r}
+# predictores = data.frame(Temperatura = seq(30, 40, 1), Aislamiento=5, Antigüedad=10)
+predictores = data.frame(Temperatura = seq(30, 40, 1), Aislamiento= seq(3,8, 0.5), Antigüedad=10)
+
+predictores
+```
+
+```{r}
+costo_est = predict(object = modelo, newdata = predictores)
+
+cbind(costo_est, predictores)
+
+data_predichos  = cbind(round(costo_est,1), predictores)
+colnames(data_predichos)[1] = 'Costo predicho'
+
+data_predichos
+```
